@@ -1,4 +1,4 @@
-"""AI Stack: This file hosts the main objects for each compatible generative AI tool
+"""AI Cluster: This file hosts the main objects for compatible generative AI tools
 """
 # pip dependencies: google-generativeai, 
 import google.generativeai as genai
