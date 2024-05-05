@@ -1,5 +1,6 @@
 """AI Stack: This file hosts the main objects for each compatible generative AI tool
 """
+# pip dependencies: google-generativeai, 
 import google.generativeai as genai
 
 class GeminiAI:

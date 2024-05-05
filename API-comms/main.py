@@ -1,5 +1,5 @@
-# pip dependencies: argparse, google-generativeai, python-dotenv
-import os#, argparse
+# pip dependencies: python-dotenv
+import os
 from dotenv import load_dotenv, dotenv_values
 from aistack import GeminiAI
 
