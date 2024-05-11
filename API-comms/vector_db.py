@@ -25,8 +25,8 @@ class VectorDB:
     def create_index(self):
         self.pc.create_index(
             name="quickstart",
-            dimension=1000, # Replace with your model dimensions
-            metric="euclidean", # Pinecone supports: [euclidean, cosine, dotproduct]
+            dimension=768, # Replace with your model dimensions
+            metric="cosine", # Pinecone supports: [euclidean, cosine, dotproduct]
             spec=ServerlessSpec(
                 cloud="aws",
                 region="us-east-1"
