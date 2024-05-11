@@ -1,8 +1,11 @@
-# pip dependency: pinecone-client, transformers, langchain, 
+# pip dependency: pinecone-client, transformers, langchain, langchain-openai
 from pinecone import Pinecone, ServerlessSpec
 from transformers import GPT2TokenizerFast, AutoModel, pipeline
+from langchain_openai import OpenAIEmbeddings
+from dotenv import load_dotenv
+import os
 
-class EmbedModel:
+class EmbeddingModel_HuggingFace:
     def __init__(self):
         self.tokenizer = GPT2TokenizerFast.from_pretrained("Xenova/text-embedding-ada-002")
         self.model = AutoModel.from_pretrained("gpt2")
@@ -16,6 +19,17 @@ class EmbedModel:
     
     def decode_token(self, vec:list[int]):
         return self.tokenizer.decode(vec)
+
+
+class EmbeddingModel:
+    def __init__(self, api):
+        self.obj = OpenAIEmbeddings(openai_api_key=api)
+
+    def embed_single(self, val:str):
+        return self.obj.embed_query(val)
+    
+    def embed_multiple(self, vals:list[str]):
+        return self.obj.embed_documents(vals)
 
 
 class VectorDB:
@@ -78,9 +92,8 @@ class VectorDB:
         #  'usage': {'read_units': 6}}
 
 
-'''if __name__ == "__main__":
-    obj = EmbedModel()
-    print(obj.get_vector('hello world'))  # token [15339, 1917]
-    print(obj.get_vector('what day is the world today'))  # token [12840, 1938, 374, 433, 1917, 3432]
-    #print(obj.decode_token([1, 2, 3, 4]))
-    '''
+if __name__ == "__main__":
+    load_dotenv()
+    stuff = EmbeddingModel(os.getenv("OPENAI_API_KEY"))
+    print(stuff.embed_single("Willmer is gay"))
+    print(stuff.embed_multiple(["What is the weather today", "Oh hello", "How is your day"]))
