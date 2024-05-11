@@ -22,15 +22,3 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=15
 
 docs = text_splitter.split_documents(data)
 
-
-
-def prep():
-    load_dotenv()
-
-def main():
-    prep()
-    aiobj = GeminiAI(os.getenv("GEMINI_API_KEY"))
-    # aiobj.get_response_default("Who was elected the president of the US in 2012")
-
-if __name__ == "__main__":
-    main()
