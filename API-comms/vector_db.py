@@ -1,3 +1,4 @@
+# pip dependency: pinecone-client
 from pinecone import Pinecone, ServerlessSpec
 
 class VectorDB:
