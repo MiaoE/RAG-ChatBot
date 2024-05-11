@@ -8,8 +8,14 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings
-from transformers import AutoTokenizer, AutoModel
+from langchain import HuggingFacePipeline
+from langchain.chains.question_answering import load_qa_chain
+from transformers import AutoTokenizer, AutoModel, AutoModelForQuestionAnswering, pipeline
 from sentence_transformers import SentenceTransformer
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
+from langchain.chains import RetrievalQA
+
 
 # Initialize dataset
 dataset_name = "databricks/databricks-dolly-15k"
@@ -41,11 +47,32 @@ embeddings = HuggingFaceEmbeddings(
 # Load into database (FAISS)
 db = FAISS.from_documents(docs, embeddings)
 
-question = "Why can camels survive for long without water?"
-searchDB = db.similarity_search(question)
-print(searchDB[0].page_content)
+# Initialize LLM
+tokenizer = AutoTokenizer.from_pretrained("deepset/roberta-base-squad2")
+model = AutoModelForQuestionAnswering.from_pretrained("deepset/roberta-base-squad2")
 
+model_name = "deepset/roberta-base-squad2"
 
+question_answer_pipeline = pipeline('question-answering', model=model_name, tokenizer=model_name)
+
+llm = HuggingFacePipeline(
+    pipeline=question_answer_pipeline, 
+    model_kwargs={"temperature": 0.5, "max_length": 512},
+)
+
+query = "Where do camels get their energy from?"
+
+# qa_chain = load_qa_chain(llm, chain_type="stuff")
+# searchDB_result = db.similarity_search(query)
+# result = qa_chain.run(input_documents=searchDB_result, question=query)
+# print(result["result"])
+
+retriever = db.as_retriever()
+# combine_docs_chain = create_stuff_documents_chain(llm, query)
+# retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
+qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
+result = result = qa.run({"query": query})
+print(result["result"])
 
 # def prep():
 #     load_dotenv()
