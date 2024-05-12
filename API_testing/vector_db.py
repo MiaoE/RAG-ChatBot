@@ -5,6 +5,7 @@ from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 import os
 
+## Embedding model code for HuggingFace is too complex
 class EmbeddingModel_HuggingFace:
     def __init__(self):
         self.tokenizer = GPT2TokenizerFast.from_pretrained("Xenova/text-embedding-ada-002")
@@ -20,7 +21,7 @@ class EmbeddingModel_HuggingFace:
     def decode_token(self, vec:list[int]):
         return self.tokenizer.decode(vec)
 
-
+## Test with OpenAI, API key does not work
 class EmbeddingModel:
     def __init__(self, api):
         self.obj = OpenAIEmbeddings(openai_api_key=api)
@@ -31,7 +32,7 @@ class EmbeddingModel:
     def embed_multiple(self, vals:list[str]):
         return self.obj.embed_documents(vals)
 
-
+## Langchain does not support Pinecone
 class VectorDB:
     def __init__(self, api_key):
         self.pc = Pinecone(api_key=api_key)

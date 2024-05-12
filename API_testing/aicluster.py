@@ -3,6 +3,7 @@
 # pip dependencies: google-generativeai, 
 import google.generativeai as genai
 
+## don't know why we thought using an AI was needed
 class GeminiAI:
     def __init__(self, api_key):
         genai.configure(api_key=api_key)

@@ -1,7 +1,7 @@
 # pip dependencies: python-dotenv
 import os
 from dotenv import load_dotenv, dotenv_values
-from aicluster import GeminiAI
+from API_testing.aicluster import GeminiAI
 
 from langchain_community.document_loaders import HuggingFaceDatasetLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -16,10 +16,15 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain.chains import RetrievalQA
 
+## TODO: re-format this file so it runs continuously (for a front-end UI)
 
 # Initialize dataset
 dataset_name = "databricks/databricks-dolly-15k"
 page_content_column = "response"
+
+## TODO: feed more data for more accurate and current results. Have a list of datasets and parse them into a feeder
+## TODO: implement real-time data for most current results
+## TODO: have multiple data types for embedding, perhaps could use Langchain's PDF Loader library
 
 # Initialize dataset Loader using HuggingFaceDatasetLoader
 loader = HuggingFaceDatasetLoader(dataset_name, page_content_column)
@@ -47,6 +52,8 @@ embeddings = HuggingFaceEmbeddings(
 # Load into database (FAISS)
 db = FAISS.from_documents(docs, embeddings)
 
+## TODO: Deploy vector database to cloud instead of local
+
 # Initialize LLM
 tokenizer = AutoTokenizer.from_pretrained("deepset/roberta-base-squad2")
 model = AutoModelForQuestionAnswering.from_pretrained("deepset/roberta-base-squad2")
@@ -54,6 +61,8 @@ model = AutoModelForQuestionAnswering.from_pretrained("deepset/roberta-base-squa
 model_name = "deepset/roberta-base-squad2"
 
 question_answer_pipeline = pipeline('question-answering', model=model_name, tokenizer=model_name)
+
+## TODO: fine-tuning the model and LLM
 
 llm = HuggingFacePipeline(
     pipeline=question_answer_pipeline, 
@@ -84,3 +93,5 @@ print(result["result"])
 
 # if __name__ == "__main__":
 #     main()
+
+## TODO: a front-end UI to interact with the ChatBot
