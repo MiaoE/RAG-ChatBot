@@ -15,6 +15,7 @@ from sentence_transformers import SentenceTransformer
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain.chains import RetrievalQA
+from langchain_community.document_loaders import PyPDFLoader
 
 
 # Initialize dataset
@@ -33,6 +34,11 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=15
 
 docs = text_splitter.split_documents(data)
 
+# Load for pdf
+loader = PyPDFLoader("pmath351_LWMarcoux.pdf")
+pages = loader.load()
+pdf_docs = text_splitter.split_documents(pages)
+
 # Define embedding model
 modelPath = "sentence-transformers/all-MiniLM-l6-v2"
 model_kwargs = {'device':'cpu'}
@@ -45,7 +51,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 # Load into database (FAISS)
-db = FAISS.from_documents(docs, embeddings)
+db = FAISS.from_documents(pdf_docs, embeddings)
 
 # Initialize LLM
 tokenizer = AutoTokenizer.from_pretrained("deepset/roberta-base-squad2")
@@ -57,10 +63,10 @@ question_answer_pipeline = pipeline('question-answering', model=model_name, toke
 
 llm = HuggingFacePipeline(
     pipeline=question_answer_pipeline, 
-    model_kwargs={"temperature": 0.5, "max_length": 512},
+    model_kwargs={"temperature": 0.2, "max_length": 512},
 )
 
-query = "Where do camels get their energy from?"
+query = "What is Cauchy sequences of rationals?"
 
 # qa_chain = load_qa_chain(llm, chain_type="stuff")
 # searchDB_result = db.similarity_search(query)
